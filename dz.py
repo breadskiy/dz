@@ -1,20 +1,20 @@
-1.1 
+#1.1
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
 
-# API key and base URL
+
 API_KEY = 'fb483a755a38446da2b152109240512'
 BASE_URL = "http://api.weatherapi.com/v1/history.json"
 
-# List of cities
+
 cities = ['London', 'New York', 'Tokyo', 'Moscow', 'Delhi', 'Seoul', 'Sidney']
 
-# Time range: last 30 days
+
 end_date = datetime.now()
 start_date = end_date - timedelta(days=30)
 
-# Collect data
+
 data = []
 for city in cities:
     for i in range(30):
@@ -26,7 +26,7 @@ for city in cities:
         })
         if response.status_code == 200:
             weather_data = response.json()
-            # Extract relevant data
+
             forecast = weather_data.get("forecast", {}).get("forecastday", [])[0]
             if forecast:
                 for hour in forecast.get('hour', []):
@@ -40,20 +40,20 @@ for city in cities:
         else:
             print(f"Failed to fetch data for {city} on {date}: {response.text}")
 
-# Save to CSV
+
 df = pd.DataFrame(data)
 df.to_csv('weather_data_weatherapi.csv', index=False)
 print("Weather data saved to weather_data_weatherapi.csv")
 
-
+#1.2
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Загрузка данных из CSV (результат предыдущего этапа)
+
 df = pd.read_csv('weather_data_weatherapi.csv')
 
-# Преобразование колонки даты в datetime
+
 df['date'] = pd.to_datetime(df['date'])
 sns.set(style="whitegrid")
 
@@ -71,10 +71,10 @@ data_extended = {
 }
 df_extended = pd.DataFrame(data_extended)
 
-# Преобразование колонки даты в datetime
+
 df_extended['date'] = pd.to_datetime(df_extended['date'])
 
-# График изменения температуры для каждого города
+
 plt.figure(figsize=(14, 7))
 for city in df_extended['city'].unique():
     city_data = df_extended[df_extended['city'] == city]
@@ -89,7 +89,7 @@ plt.yticks(fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# График распределения температуры
+
 plt.figure(figsize=(12, 7))
 sns.histplot(data=df_extended, x='temp_c', hue='city', kde=True, bins=15, palette='Set2')
 plt.title('Распределение температуры в разных городах', fontsize=16)
